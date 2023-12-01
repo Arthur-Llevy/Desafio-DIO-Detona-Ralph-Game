@@ -8,14 +8,17 @@ const state = {
         squares: document.querySelectorAll('.square'),
         enemy: document.querySelector('.enemy'),
         timeLeft: document.querySelector('#time-left'),
-        score: document.querySelector('#score')
+        score: document.querySelector('#score'),
+        lives: document.querySelector('#lives')
     },
     values: {
         timeId: null,
         gameVelocity: 1000,
         hitPosition: "0",
         results: 0,
-        currentTime: 60
+        currentTime: 60,
+        audio: document.querySelector('#hit'),
+        lives: 3
     },
     actions: {
         countDownTimerId: setInterval(countDown, 1000),
@@ -23,14 +26,17 @@ const state = {
     }
 };
 function playSoud() {
-    let audio = new Audio('../sounds/hit.m4a');
-    audio.play();
+    if (state.values.audio) {
+        state.values.audio.play();
+    }
+    ;
 }
 ;
 function countDown() {
-    if (state.values.currentTime <= 0) {
+    if (state.values.currentTime <= 0 || state.values.lives === 0) {
         clearInterval(state.actions.countDownTimerId);
-        alert(`Game over! A sua pontuação foi de ${state.values.results}`);
+        alert(`Game over! A sua pontuação foi de ${state.values.results} pontos.`);
+        window.location.reload();
     }
     else {
         state.values.currentTime--;
@@ -71,6 +77,12 @@ function addListenerHitBox() {
                         state.values.hitPosition = null;
                     }
                     ;
+                }
+                else {
+                    state.values.lives === 0 ? 0 : state.values.lives--;
+                    if (state.view.lives) {
+                        state.view.lives.textContent = `${(state.values.lives).toString()}x`;
+                    }
                 }
                 ;
             });
